@@ -32,8 +32,9 @@ public class University {
     public void generateGroupInfo(String path) {
         for (int i = 0; i < catalog.size(); i++) {
             try {
+                String Uni_url = catalog.get(i).getLink();
                 HttpsURLConnection conn;
-                URL url = new URL(path);
+                URL url = new URL(Uni_url);
                 conn = (HttpsURLConnection) url.openConnection();
                 SSLContext sc = SSLContext.getInstance("SSL");
                 sc.init(null, new TrustManager[]{new TrustHttpsManager()}, new java.security.SecureRandom());
@@ -47,7 +48,7 @@ public class University {
                 NodeList childNodes = doc.getChildNodes();
 
                 String fileName = childNodes.item(0).getAttributes().item(0).getTextContent().split(",")[0];
-                FileWriter writer = new FileWriter(fileName + ".csv", false);
+                FileWriter writer = new FileWriter(path+ "\\" +fileName + ".csv", false);
 
                 writer.append("ФАМИЛИЯ, ОТЧЕСТВО, ИМЯ, СТАТУС\n");
                 for (int student = 0; student < childNodes.item(0).getChildNodes().getLength(); student++) {
