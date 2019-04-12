@@ -1,16 +1,19 @@
 package main.java;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.xml.parsers.*;
-import java.io.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.FileWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.net.URL;
-import java.util.stream.Collectors;
 
 
 public class University {
@@ -45,18 +48,23 @@ public class University {
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document doc = builder.parse(conn.getInputStream());
 
-                NodeList childNodes = doc.getChildNodes();
+                Node root = doc.getDocumentElement();
+                NodeList childNodes = root.getChildNodes();
 
-                String fileName = childNodes.item(0).getAttributes().item(0).getTextContent().split(",")[0];
+
+                String fileName = catalog.get(i).getName();
                 FileWriter writer = new FileWriter(path+ "\\" +fileName + ".csv", false);
 
                 writer.append("ФАМИЛИЯ, ОТЧЕСТВО, ИМЯ, СТАТУС\n");
-                for (int student = 0; student < childNodes.item(0).getChildNodes().getLength(); student++) {
-                    NamedNodeMap attributes = childNodes.item(i).getChildNodes().item(student).getAttributes();
+
+
+                for (int student = 0; student < childNodes.getLength(); student++) {
+
+                    NamedNodeMap attributes = childNodes.item(student).getAttributes();
                     if (attributes != null) {
-                        String[] user = attributes.item(0).getTextContent().split(" ");
+                        String[] info = attributes.item(0).getTextContent().split(" ");
                         String status = attributes.item(1).getTextContent();
-                        writer.append(String.format("%s, %s, %s, %s", user[0], user[2], user[1], status));
+                        writer.append(String.format("%s, %s, %s, %s", info[0], info[2], info[1], status));
                         writer.append("\n");
                     }
                 }
